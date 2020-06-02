@@ -1,32 +1,29 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app>
+    <router-view></router-view>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+<script lang="ts">
+import Vue from "vue";
+import Axios from "axios";
+export default Vue.extend({
+  name: "App",
+  async created() {
+    console.log(process.env.VUE_APP_API_BASE_URL);
+    const myInfo = await Axios.get("/user/info");
+    if (myInfo.data.success) {
+      this.$store.commit("setLoggedIn", true);
+      this.$store.commit("setUserState", myInfo.data.result);
+      if (this.$route.path == "/login") {
+        const goto = `${this.$route.query.goto || "/"}`;
+        this.$router.replace(goto);
+      }
+    }
+  },
+  data() {
+    return {};
+  },
+  methods: {}
+});
+</script>
